@@ -1,0 +1,17 @@
+[
+  {
+    "nume": "Ana",
+    "varsta": 28,
+    "rol": "admin"
+  },
+  {
+    "nume": "Horia",
+    "varsta": 30,
+    "rol": "editor"
+  },
+  {
+    "nume": "George",
+    "varsta": 40,
+    "rol": "user"
+  }
+]

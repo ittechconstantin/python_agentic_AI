@@ -1,0 +1,66 @@
+# =============================================================
+# .gitignore  -  ce NU trimitem pe GitHub, si de ce
+# =============================================================
+# Git urmareste FIECARE fisier dintr-un folder, by default. Un
+# .gitignore spune explicit "ignora astea" - fisiere care nu au ce
+# cauta in istoricul proiectului, pentru unul din motivele de mai jos.
+
+# Bytecode Python - fisiere COMPILATE automat de Python la rulare
+# (cache intern, .pyc). Se regenereaza singure de fiecare data; a le
+# urca ar umple istoricul cu fisiere binare diferite de la un
+# calculator la altul, fara niciun folos.
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Secrete - chei API, parole, token-uri (de obicei intr-un fisier
+# .env). Daca ajung pe GitHub, mai ales pe un repo PUBLIC, oricine le
+# poate vedea si folosi - inclusiv dupa ce le stergi mai tarziu,
+# pentru ca raman in ISTORICUL vechi de commit-uri.
+.env
+
+# Medii virtuale - folderul cu Python + toate librariile instalate
+# pentru acest proiect (poate avea sute de MB). Se poate RECREA oricand
+# din requirements.txt - n-are rost sa il urci.
+.venv/
+venv/
+env/
+ENV/
+
+# Build / distributie - fisiere generate cand "impachetezi" proiectul
+# ca librarie (ex: pip build). Se regenereaza mereu din codul sursa.
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Setari personale de editor - fiecare coleg are alt IDE, alte
+# extensii, alte preferinte de afisare. Nu sunt parte din proiect, ci
+# strict personale.
+.idea/
+.vscode/
+*.swp
+
+# Loguri si cache - fisiere generate la rulare/testare (loguri, cache
+# de teste, rapoarte de acoperire a codului). Cresc repede si nu ajuta
+# pe nimeni in istoricul de cod.
+*.log
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Fisiere specifice sistemului de operare - create automat de macOS/
+# Windows la simpla navigare prin foldere, fara nicio legatura cu codul.
+.DS_Store
+Thumbs.db
+
+# Date generate de aplicatie - rapoarte/exporturi create cand RULEZI
+# codul (nu scrise de tine manual). ATENTIE: e o regula GENERALA - daca
+# ai fisiere .csv/.json/.xlsx pe care CHIAR vrei sa le urci (ex: date
+# demo pentru un proiect), adauga o exceptie explicita, cu "!" in fata:
+#   !cale/catre/fisierul_tau.csv
+output/
+*.xlsx
+*.csv
+*.json
