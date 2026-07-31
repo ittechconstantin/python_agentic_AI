@@ -58,6 +58,7 @@
 # =============================================================
 
 import streamlit as st
+from streamlit import spinner
 from numpy.random.mtrand import normal
 
 PRET_BAZA = {"Mica": 20, "Medie": 28, "Mare": 36}
@@ -72,14 +73,14 @@ PRET_LIVRARE = 8
 
 
 st.title("Configurator de pizza")
-st.selectbox("Marime", list(PRET_BAZA), key="marime")
-st.multiselect("Toppinguri", ["cascaval extra", "ciuperci", "masline", "sunca", "ananas", "ardei"], key="toppinguri")
-st.segmented_control("Blat", ["subtire", "normal", "gros cu cascaval"], default="normal")
-st.toggle("Livrare la domiciliu (+8 RON)", key="livrare")
-st.number_input("Cantitate", min_value=1, value=1, key="cantitate")
-from numpy.random.mtrand import normal
-pret_pizza = PRET_BAZA["Marime"] + len("Toppinguri") * PRET_TOPPING
-if "Blat" == "gros cu cascaval": pret_pizza += PRET_BLAT_GROS
-total = pret_pizza * "cantitate"
-if "livrare": total += PRET_LIVRARE
+marime = st.selectbox("Marime", options=list(PRET_BAZA), key="marime")
+toppinguri = st.multiselect("Toppinguri", ["cascaval extra", "ciuperci", "masline", "sunca", "ananas", "ardei"], key="toppinguri")
+blat = st.segmented_control("Blat", ["subtire", "normal", "gros cu cascaval"], default="normal")
+livrare = st.toggle("Livrare la domiciliu (+8 RON)", key="livrare")
+cantitate = st.number_input("Cantitate", min_value=1, value=1, key="cantitate")
+
+pret_pizza = PRET_BAZA[marime] + len(toppinguri) * PRET_TOPPING
+if blat == "gros cu cascaval": pret_pizza += PRET_BLAT_GROS
+total = pret_pizza * cantitate
+if livrare: total += PRET_LIVRARE
 st.metric("Total de plata", f"{total} RON")

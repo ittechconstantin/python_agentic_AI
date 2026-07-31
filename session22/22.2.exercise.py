@@ -69,14 +69,15 @@ import streamlit as st
 #       pills + slider + 2 butoane + afisare lista)
 
 st.title("Playlist-ul tau")
-st.text_input("Titlu", key="titlu")
 if "playlist" not in st.session_state: st.session_state.playlist = []
-st.text_input("Artist", key="artist")
-st.pills("Gen", ["pop", "rock", "hip-hop", "electronic", "clasica"], key="gen", default="pop")
-st.slider("Durata (minute)", 1, 10, 3, key="durata")
-if st.button("Adauga in playlist", key="adauga") and "titlu":st.session_state.playlist.append({"titlu": titlu, "artist": artist,"gen": gen, "durata": durata})
+titlu = st.text_input("Titlu", key="titlu")
+artist = st.text_input("Artist", key="artist")
+gen = st.pills("Gen", ["pop", "rock", "hip-hop", "electronic", "clasica"], key="gen", default="pop")
+durata = st.slider("Durata (minute)", 1, 10, 3, key="durata")
+if st.button("Adauga in playlist", key="adauga") and titlu:st.session_state.playlist.append({"titlu": titlu, "artist": artist,"gen": gen, "durata": durata})
 if st.button("Goleste playlist", key="goleste"): st.session_state.playlist = []
 total = sum(m["durata"] for m in st.session_state.playlist)
 st.write(f"{len(st.session_state.playlist)} melodii, {total} minute")
 for m in st.session_state.playlist:
         st.write(f"- {m['titlu']} - {m['artist']} ({m['gen']}, {m['durata']} min)")
+

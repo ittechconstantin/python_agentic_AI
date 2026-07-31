@@ -25,7 +25,10 @@ import csv
 import json
 import os
 
+import streamlit as s
 import streamlit as st
+import pandas as pd
+import numpy as np
 
 TMP = "data_s23_tema_cheltuieli"
 os.makedirs(TMP, exist_ok=True)
@@ -82,11 +85,10 @@ st.header("2. Adauga o cheltuiala noua")
 #   - data = st.date_input("Data")
 #   - trimis = st.form_submit_button("Salveaza cheltuiala")
 with st.form("formular_vanzare"):
-produs = st.text_input("Introduceti numere produsului")
-categorie = st.selectbox("Categorie", CATEGORII)
-suma = st.number_input("Suma (lei)", min_value=0.0, step=1.0)
-data = st.date_input("Data")
-trimis = st.form_submit_button("Salveaza cheltuiala")
+    categorie = st.selectbox("Categorie", CATEGORII)
+    suma = st.number_input("Suma (lei)", min_value=0.0, step=1.0)
+    data = st.date_input("Data")
+    trimis = st.form_submit_button("Salveaza cheltuiala")
 
 # TODO 2.2: daca trimis e True:
 #   - verifica daca fisierul CALEA_CSV exista deja (os.path.exists)
@@ -96,9 +98,9 @@ trimis = st.form_submit_button("Salveaza cheltuiala")
 #   - scrie randul nou cu writer.writerow({...})
 #     (atentie: str(data), ca sa transformi obiectul date in text)
 #   - afiseaza o confirmare cu st.toast(...) sau st.success(...)
-if trimis and produs:
+if trimis:
     exista_deja = os.path.exists(CALEA_CSV)
-    with open(CALEA_CSV, "a", newline="", encoding="utf-8"):
+    with open(CALEA_CSV, "a", newline="", encoding="utf-8")as f:
         writer = csv.DictWriter(f ,fieldnames=["categorie", "suma", "data"])
         if not exista_deja:
             writer.writeheader()
@@ -125,21 +127,31 @@ st.header("3. Toate cheltuielile + totaluri")
 
 # TODO 3.1: daca CALEA_CSV exista:
 #   - citeste toate randurile cu csv.DictReader (ca la Partea 3 din curs)
-#   - afiseaza-le cu st.dataframe(...)
-#   - calculeaza totalul general (suma tuturor cheltuielilor) si
+#   - afiseaza-le cu st.dataframe(...)c si
 #     afiseaza-l cu st.metric(...)
 #   - calculeaza dictionarul "totale pe categorie", asa cum e descris
 #     mai sus, si afiseaza-l cu st.bar_chart(...)
 # altfel:
 #   - afiseaza un mesaj cu st.info("Nicio cheltuiala inca")
+
+totale = {}
+
+
 if os.path.exists(CALEA_CSV):
-    with open(CALEA_CSV, "a", newline="", encoding="utf-8"):
+    with open(CALEA_CSV, "r", newline="", encoding="utf-8") as f:
         randuri = list(csv.DictReader(f))
-    st.dataframe(randuri)
-    total = sum(float(produs['cantitate']) * float(produs['pret']) for produs in randuri)
-    st.metric(f"Total incasari: ", f"{total:.2f}")
+        st.dataframe(randuri)
+        totalul_general = sum(float(categorie[suma]) for row in randuri)
+        st.metric("Total", f"({totalul_general:.2f} lei)")
+        if categorie not in totale:
+            categorie = 0
+        totalul_general += totale[categorie]
+        st.bar_chart(totale)
 else:
     st.info(f"Nicio cheltuiala inca")
+
+
+
 # #############################################################
 # PARTEA 4 - ACELEASI DATE, CA JSON
 # #############################################################
@@ -151,7 +163,7 @@ st.header("4. Cheltuielile in format json")
 # TODO 4.1: daca CALEA_CSV exista, reciteste-l si afiseaza-l cu st.json(...)
 # altfel, afiseaza st.info("Nicio cheltuiala inca")
 if os.path.exists(CALEA_CSV):
-    with open(CALEA_CSV, "a", newline="", encoding="utf-8"):
+    with open(CALEA_CSV, "r", newline="", encoding="utf-8") as f:
         cheltuieli = list(csv.DictReader(f))
     st.json(cheltuieli)
 else:
@@ -171,7 +183,7 @@ else:
 
 # TODO BONUS: adauga un st.download_button care ofera spre descarcare
 # json.dumps(vanzari, indent=2, ensure_ascii=False) ca fisier "cheltuieli.json"
-st.download_button(json.dumps(vanzari, indent=2, ensure_ascii=False))
+st.download_button(label, data, file_name="cheltuieli.json")
 
 # =============================================================
 # RECAP - CE TREBUIE SA STIE APLICATIA TA LA FINAL
