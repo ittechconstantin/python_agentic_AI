@@ -53,15 +53,29 @@ os.makedirs(TMP, exist_ok=True)
 
 
 # ---- ZONA TA DE LUCRU ---------------------------------------
+from openpyxl.styles import Font, PatternFill, Alignment
+import os
+
 
 def scrie_angajati(cale, angajati):
     # TODO: creeaza workbook, scrie header + randuri, salveaza
-    ...
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Angajati"
+    ws.append(["nume", "salariu"])
+    for nume, salariu in angajati:
+        ws.append([nume, salariu])
+    wb.save(cale)
 
 
 def citeste_angajati(cale):
     # TODO: citeste (nume, salariu), fara header
-    ...
+    ws = load_workbook(cale).active
+    rezultat = []
+    for nume, salariu in ws.iter_rows(min_row =2 , values_only=True):
+        rezultat.append([nume, salariu])
+    return rezultat
+
 
 
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------

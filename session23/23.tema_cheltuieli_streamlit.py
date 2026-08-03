@@ -183,7 +183,7 @@ else:
 
 # TODO BONUS: adauga un st.download_button care ofera spre descarcare
 # json.dumps(vanzari, indent=2, ensure_ascii=False) ca fisier "cheltuieli.json"
-st.download_button(label, data, file_name="cheltuieli.json")
+st.download_button(label=json.dumps("vanzari", indent=2, ensure_ascii=False),file_name="cheltuieli.json")
 
 # =============================================================
 # RECAP - CE TREBUIE SA STIE APLICATIA TA LA FINAL

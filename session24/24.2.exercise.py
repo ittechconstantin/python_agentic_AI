@@ -49,6 +49,9 @@
 
 import os
 from openpyxl import Workbook, load_workbook
+import os
+from openpyxl import workbook, load_workbook
+
 
 TMP = "data_s24_ex2"
 os.makedirs(TMP, exist_ok=True)
@@ -58,12 +61,27 @@ os.makedirs(TMP, exist_ok=True)
 
 def exporta(cale, useri, produse):
     # TODO: workbook cu foile "Useri" si "Produse", fiecare cu header + randuri
-    ...
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Useri"
+    ws.append(["nume", "rol"])
+    for nume, rol in useri:
+        ws.append([nume, rol])
+
+    ws2 = wb.create_sheet("Produse")
+    ws2.append(["nume", "pret"])
+    for nume, pret in produse:
+        ws2.append([nume, pret])
+    wb.save(cale)
 
 
 def citeste_foaie(cale, nume_foaie):
     # TODO: intoarce lista de dict-uri din foaia ceruta (primul rand = header)
-    ...
+    ws = load_workbook(cale)[nume_foaie]
+    randuri = ws.iter_rows(values_only=True)
+    headers = next(randuri)
+    return[dict(zip(headers, r))for r in randuri]
+
 
 
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------

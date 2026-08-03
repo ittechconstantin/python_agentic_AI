@@ -1,0 +1,38 @@
+[
+  {
+    "companie": "Innoware",
+    "post": "QA Engineer",
+    "data_aplicare": "2026-07-15",
+    "sursa": "linkedin",
+    "stare": "Aplicat",
+    "data_ultimului_contact": "2026-07-15",
+    "notite": ""
+  },
+  {
+    "companie": "Vertex Solutions",
+    "post": "DevOps Engineer",
+    "data_aplicare": "2026-07-10",
+    "sursa": "site",
+    "stare": "Interviu",
+    "data_ultimului_contact": "2026-07-22",
+    "notite": "Interviu tehnic programat"
+  },
+  {
+    "companie": "Quantum Byte",
+    "post": "Backend Developer",
+    "data_aplicare": "2026-06-15",
+    "sursa": "recomandare",
+    "stare": "Oferta",
+    "data_ultimului_contact": "2026-07-28",
+    "notite": "Oferta primita, negociez salariul"
+  },
+  {
+    "companie": "Stellar Apps",
+    "post": "Frontend Developer",
+    "data_aplicare": "2026-06-01",
+    "sursa": "linkedin",
+    "stare": "Respins",
+    "data_ultimului_contact": "2026-06-10",
+    "notite": "Nu am trecut de interviul tehnic"
+  }
+]

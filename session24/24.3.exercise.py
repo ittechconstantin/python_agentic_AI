@@ -120,6 +120,8 @@
 import os
 from openpyxl import Workbook, load_workbook
 import streamlit as st
+from openpyxl import Workbook, load_workbook
+
 
 TMP = "data_s24_ex3"
 os.makedirs(TMP, exist_ok=True)
@@ -131,5 +133,37 @@ CATEGORII = ["Mancare", "Transport", "Utilitati", "Divertisment", "Altele"]
 # ---- ZONA TA DE LUCRU ---------------------------------------
 # TODO: scrie aici interfata (title + form + salvare in Excel +
 #       afisare tabel + total general + total pe categorie)
+st.title("Jurnalul meu de cheltuieli")
+with st.form("formular_cheltuiala"):
+    categorie = st.selectbox("Categorie", CATEGORII, key="categorie")
+    suma = st.number_input("Suma (lei)", min_value=0.0, step=10.0, key="suma")
+    trimis = st.form_submit_button("Adauga cheltuiala")
 
+if trimis and suma > 0:
+      if os.path.exists(CALE_XLSX):
+          wb = load_workbook(CALE_XLSX)
+          ws = wb.active
+      else:
+          wb = Workbook()
+          ws = wb.active
+          ws.title = "Cheltuieli"
+          ws.append(["categorie", "suma"])
+      ws.append([categorie, suma])
+      wb.save(CALE_XLSX)
+      st.toast(f"Salvat: {categorie} - {suma} lei")
 
+if os.path.exists(CALE_XLSX):
+    ws_in = load_workbook(CALE_XLSX).active
+    cheltuieli = list(ws_in.iter_rows(min_row=2, values_only=True))
+    st.dataframe(cheltuieli)
+
+    total_general = sum(suma for _, suma in cheltuieli)
+    st.metric("Total cheltuieli", f"{total_general} lei")
+
+    totaluri = {}
+    for categorie, suma in cheltuieli:
+        totaluri[categorie] = totaluri.get(categorie, 0) + suma
+        for categorie, suma in totaluri.items():
+            st.write(f"{categorie}: {suma} lei")
+else:
+    st.info("Nicio cheltuiala salvata inca = completeaza formularul de mai sus.")
