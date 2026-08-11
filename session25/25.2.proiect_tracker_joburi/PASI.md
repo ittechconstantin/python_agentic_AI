@@ -36,6 +36,19 @@ Ce trebuie să faci, pas cu pas:
 funcție și în aproape fiecare ecran de mai jos — de-asta le scrii o
 singură dată, la începutul fișierului.
 
+import csv
+import os
+import json
+import streamlit as st
+import date from datetime
+
+TMP = "demo_data"
+os.makedirs(TMP, exist_ok=True)
+
+calea_db = os.path.join(TMP, "aplicatii.json")
+
+STARI = ["Aplicat", "Interviu", "Oferta", "Respins"]
+
 ## PASUL 1 — Salvarea și încărcarea listei de aplicații
 
 **La acest pas trebuie să implementezi 2 funcții.**
@@ -45,6 +58,13 @@ să nu dispară atunci când închizi pagina — sunt singurele două locuri
 din tot codul unde vorbim cu fișierul de pe calculator.
 
 ### Funcția 1 — `incarca_aplicatii()`
+
+def incarca_aplicatii():
+    if os.path.exists(calea_db):
+        with open(calea_db, encoding = 'utf-8') as f:
+            return json.load(f)
+    else:
+        return []
 
 **Rolul ei:** aduce înapoi, din fișierul salvat pe calculator, lista de
 aplicații pe care ai adăugat-o data trecută. Fără ea, aplicația ar
@@ -61,6 +81,10 @@ porni mereu de la zero.
   - lista de aplicații citită din fișier, dacă există.
 
 ### Funcția 2 — `salveaza_aplicatii(aplicatii)`
+
+def salveaza_aplicatii(aplicatii):
+    with open(calea_db, mode='w', encoding='utf-8') as f:
+        json.dump(aplicatii,f, indent=2)
 
 **Rolul ei:** pune pe calculator orice schimbare faci (aplicație nouă,
 stare schimbată) — altfel schimbarea s-ar pierde imediat ce închizi
@@ -93,6 +117,16 @@ aplicație.
 
 ### Funcția 1 — `normalizeaza_rand(rand_brut)`
 
+def normalizeaza_rand(rand_brut):
+    return {'companie': str(rand_brut['companie'].strip()),
+            'post': str(rand_brut['post'].strip(),
+            'data_aplicare': str(rand_brut['data_aplicare'].strip(),
+            'sursa': str(rand_brut['sursa'].strip(),
+            'stare': "Aplicat",
+            'data_ultimului_contact': "data_aplicare",
+            'notite':""
+    }
+
 **Rolul ei:** un rând citit dintr-un CSV vine incomplet (n-are stare,
 n-are dată de ultim contact) — funcția asta completează ce lipsește.
 
@@ -112,6 +146,10 @@ n-are dată de ultim contact) — funcția asta completează ce lipsește.
 
 ### Funcția 2 — `citeste_csv_incarcat(fisier)`
 
+def citeste_csv_incarcat(fisier):
+    linii_text = fisier.read().decode("utf-8").splitlines()
+    return [normalizeaza rand(r) for r in csv. DictReader(linii_text)]
+
 **Rolul ei:** ia fișierul brut pe care utilizatorul l-a încărcat în
 pagina web și îl transformă într-o listă de aplicații gata de folosit,
 apelând `normalizeaza_rand` pentru fiecare rând.
@@ -127,6 +165,11 @@ apelând `normalizeaza_rand` pentru fiecare rând.
   tot fișierul.
 
 ### Funcția 3 — `adauga_aplicatii_noi(existente, importate)`
+
+def adauga_aplicatii_noi(existente, importate):
+    aplicatii_existente = {rand['companie', 'post'].lower() for rand in existente}
+    de_adaugat = [rand for rand in importate if rand ['companie', 'post'].lower() not in aplicatii_existente]
+    return aplicatii_existente+de_adaugat, len(de_adaugat))
 
 **Rolul ei:** compară aplicațiile deja salvate cu cele importate din
 CSV, și le adaugă doar pe cele care chiar sunt noi.
@@ -162,6 +205,21 @@ De acum înainte doar construiești ecranul care le folosește.
 
 ## PASUL 3 — Ecranul de import CSV
 
+st.set_page_config(page_title="Tracker aplicatii job")
+st.title("Jurnalul meu de aplicatii")
+aplicatii = incarca_aplicatii()
+st.header("1. Import date CSV")
+fisier_incarcat - st.file_uploader("Lista de aplicatii de adaugat, type="csv")
+if fisier_incarcat is not None:
+    importate = citeste_csv_incarcat(fisier_incarcat)
+    aplicatii_previzualitate, cate_noi = adauga_aplicatii_noi(aplicatii, importate)
+    st.caption(f"{cate_noi}aplicatii noi gasite")
+
+if cate_noi > 0 and st.button("Adauga cele{cate_noi} aplicatii noi"):
+    salveaza_aplicatii(aplicatii_previzualizate)
+    st.succes(f"{cate_noi} aplicatii noi au fost adaugate!")
+    st.rerun()
+
 **La acest pas NU mai scrii funcții noi** — folosești
 `citeste_csv_incarcat` și `adauga_aplicatii_noi` de la Pasul 2.
 
@@ -187,6 +245,18 @@ strica lista fără să apuci să te răzgândești.
 
 ## PASUL 4 — Tabelul filtrabil după stare
 
+st.header("2. Trackerul meu")
+if not aplicatii:
+    st.info("Nu exista nicio aplicatie adaugata.")
+else:
+    col_toate = st.columns(1)
+    
+    with col_stari:
+        stari_ales = st.selectbox("Filtreaza dupa stari", [Toate] + STARI)
+
+    aplicatii_filtrare = [a for a in aplicatii if a['stari'] == a_ales]
+    st.dataframe(titluri_filtrare)
+
 **La acest pas NU mai scrii funcții noi.**
 
 **Rolul acestui ecran:** utilizatorul vede toate aplicațiile, sau doar
@@ -203,6 +273,14 @@ Ce trebuie să faci, pas cu pas:
 4. afișezi rezultatul într-un tabel.
 
 ## PASUL 5 — Adăugare aplicație nouă
+
+with st.form("form_adaugare):
+    companie_nou = st.text_input
+    'companie': companie_nou,
+    'post': post_nou,
+    'stare': "Aplicat",
+    'data_ultimului_contact': "data_aplicare",
+    'notite':""
 
 **La acest pas NU mai scrii funcții noi.**
 

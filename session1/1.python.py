@@ -1,48 +1,48 @@
-Johnnu
-geonnyguy
-Invisible
-
-This is the start of the #general channel.
-Doroftei Gabriel — 4/30/2026 6:14 PM
-Buna ziua! Vroiam sa va informez ca din ceva cauze tehnice si unele neintelegeri nu am fost gata in timp pentru a participa la cursul de azi!
-Horia SCURTU — 4/30/2026 7:45 PM
-https://www.python.org/
-Python.org
-Welcome to Python.org
-The official home of the Python Programming Language
-Image
-Horia SCURTU — 4/30/2026 7:57 PM
-https://www.jetbrains.com/pycharm/?source=google&medium=cpc&campaign=emea_en_east_pycharm_branded&term=pycharm&content=785237935121&gad_source=1&gad_campaignid=14124132468&gbraid=0AAAAADloJzjoaFsfCeQHULpfgOn0pwl7r&gclid=CjwKCAjw-8vPBhBbEiwAoA39WrfrKWws_AoX8wwaYL3m9fVYC3Ne-VDILm-vwq8yEKP_bbqly4VeShoCn5oQAvD_BwE
-JetBrains
-PyCharm: The only Python IDE you need
-Built for web, data, and AI/ML professionals. Supercharged with an AI-enhanced IDE experience.
-PyCharm: The only Python IDE you need
-Horia SCURTU — 10:02 AM
-Buna dimineata tuturor!  🥳
-
-Astăzi ne vedem la curs, la ora 18:00.
-
-Mai jos aveți linkul pentru conectare: https://meet.google.com/bfi-piyh-xwz.
-Meet
-Real-time meetings by Google. Using your browser, share your video, desktop, and presentations with teammates and customers.
-Image
-Horia SCURTU — 7:19 PM
+# Johnnu
+# geonnyguy
+# Invisible
+#
+# This is the start of the #general channel.
+# Doroftei Gabriel — 4/30/2026 6:14 PM
+# Buna ziua! Vroiam sa va informez ca din ceva cauze tehnice si unele neintelegeri nu am fost gata in timp pentru a participa la cursul de azi!
+# Horia SCURTU — 4/30/2026 7:45 PM
+# https://www.python.org/
+# Python.org
+# Welcome to Python.org
+# The official home of the Python Programming Language
+# Image
+# Horia SCURTU — 4/30/2026 7:57 PM
+# https://www.jetbrains.com/pycharm/?source=google&medium=cpc&campaign=emea_en_east_pycharm_branded&term=pycharm&content=785237935121&gad_source=1&gad_campaignid=14124132468&gbraid=0AAAAADloJzjoaFsfCeQHULpfgOn0pwl7r&gclid=CjwKCAjw-8vPBhBbEiwAoA39WrfrKWws_AoX8wwaYL3m9fVYC3Ne-VDILm-vwq8yEKP_bbqly4VeShoCn5oQAvD_BwE
+# JetBrains
+# PyCharm: The only Python IDE you need
+# Built for web, data, and AI/ML professionals. Supercharged with an AI-enhanced IDE experience.
+# PyCharm: The only Python IDE you need
+# Horia SCURTU — 10:02 AM
+# Buna dimineata tuturor!  🥳
+#
+# Astăzi ne vedem la curs, la ora 18:00.
+#
+# Mai jos aveți linkul pentru conectare: https://meet.google.com/bfi-piyh-xwz.
+# Meet
+# Real-time meetings by Google. Using your browser, share your video, desktop, and presentations with teammates and customers.
+# Image
+# Horia SCURTU — 7:19 PM
 # Istoria si caracteristicile limbajului Python
 
 # -----------------------------------------------------------
 # Istoria Python
 # -----------------------------------------------------------
 
-1.python.py
-2 KB
+# 1.python.py
+# 2 KB
 # Introducere in instalarea unui IDE - PyCharm
 
 # 1. Ce este un IDE?
 # Un IDE (Integrated Development Environment) este o aplicatie software care combină un set de instrumente pentru
 # programare intr-un singur mediu.
 
-2.IDE.py
-1 KB
+# 2.IDE.py
+# 1 KB
 # Instalarea interpretorului Python
 
 # Ce este un interpret Python?
@@ -50,8 +50,8 @@ Horia SCURTU — 7:19 PM
 # pe care calculatorul le intelege si le executa pas cu pas.
 # Practic, este “motorul” care ruleaza codul tau .py.
 
-3.interpreter.py
-1 KB
+# 3.interpreter.py
+# 1 KB
 # FUNCTIA print()
 # ==========================================
 
@@ -59,8 +59,8 @@ Horia SCURTU — 7:19 PM
 # ------------------
 # Ea afiseaza date in consola, adica trimite continutul specificat catre iesirea standard.
 
-4.print().py
-1 KB
+# 4.print().py
+# 1 KB
 # Ce este o variabila?
 # --------------------
 # O variabila este un nume asociat unei locatii din memorie, in care se stocheaza o valoare.
@@ -68,9 +68,9 @@ Horia SCURTU — 7:19 PM
 # Practic, o variabila retine date pe care le putem folosi, modifica sau afisa ulterior.
 # In Python, variabilele se creeaza automat in momentul in care li se atribuie o valoare.
 
-5.variables.py
-3 KB
-﻿
+# 5.variables.py
+# 3 KB
+# ﻿
 # Istoria si caracteristicile limbajului Python
 
 # -----------------------------------------------------------

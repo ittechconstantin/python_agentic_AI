@@ -46,7 +46,7 @@ print("\n--- Exercitiul 3 ---")
 numere = [10, 20, 30, 40, 50, 60, 70, 80]
 print(numere[:3])
 print(numere[-3:])
-print(numere[2:6])
+print(numere[2:5])
 
 # 4. Modificarea unui element
 # ---------------------------

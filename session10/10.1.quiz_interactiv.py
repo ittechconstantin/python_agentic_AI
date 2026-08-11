@@ -251,7 +251,7 @@ print(f"  intrebari corecte:   {intrebari_corecte} / {i}")
 
 # Mesaj in functie de procent (if / elif / else — recap!)
 if procent >= 90:
-    print(f"\n  *** EXCELENT, {nume}! Stii materia ca pe palma.")
+    print(f"\n  *** EXCELENT, {nume}! Stii materia ca in palma.")
 elif procent >= 70:
     print(f"\n  ** Foarte bine, {nume}! Mai cizelam cateva detalii.")
 elif procent >= 50:
