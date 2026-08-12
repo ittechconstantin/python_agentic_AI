@@ -43,7 +43,8 @@ def salveaza_aplicatii(aplicatii):
       inlocuind complet ce era scris inainte acolo (nu adauga, rescrie tot)
     - nu intoarce nimic
     """
-    pass
+    with open(calea_db, mode = "w", encoding="utf-8") as f:
+        json.dump(aplicatii,f, indent=2)
 
 
 # ==============PASUL 2 — Import din CSV, fara duplicate=========================
@@ -77,7 +78,15 @@ def normalizeaza_rand(rand_brut):
     - completeaza notite=""
     - intoarce un singur dict, cu toate cele 7 campuri
     """
-    pass
+    return {
+        'companie': str(rand_brut['companie']).strip(),
+        'post': str(rand_brut['post']).strip(),
+        'data_aplicare': str(rand_brut['data_aplicare']).strip(),
+        'sursa': str(rand_brut['sursa']).strip(),
+        'stare':'Aplicat',
+        'data_ultimului_contact':str(rand_brut['data_aplicare']).strip(),
+        'notite':""
+    }
 
 
 # De ce avem nevoie de functia asta? Dupa ce utilizatorul incarca un
@@ -124,8 +133,9 @@ def adauga_aplicatii_noi(existente, importate):
     - intoarce DOUA valori: lista rezultata (existente + doar cele chiar
       noi) si numarul de aplicatii noi
     """
-    pass
-
+    aplicatii_existente = [(rand['companie'].lower(), rand['post'].lower()) for rand in existente]
+    de_adaugat = [rand for rand in importate if (rand['companie'].lower(), rand['post'].lower()) not in aplicatii_existente]
+    return aplicatii_existente + de_adaugat, len(de_adaugat)
 
 # ==============STREAMLIT=========================
 # De aici incolo e partea pe care o vede utilizatorul in pagina web. Folosim
@@ -150,7 +160,13 @@ if fisier_incarcat is not None:
     #    "Adauga cele {cate_noi} aplicatii noi"
     # 4. la apasarea butonului: salveaza_aplicatii(lista_rezultata),
     #    st.success(...), st.rerun()
-    pass
+    aplicatii_previzualitate, cate_noi = adauga_aplicatii_noi(aplicatii, importate)
+    st.caption(f"{cate_noi}aplicatii noi gasite")
+
+if cate_noi > 0 and st.button("Adauga cele{cate_noi} aplicatii noi"):
+    salveaza_aplicatii(aplicatii_previzualizate)
+    st.succes(f"{cate_noi} aplicatii noi au fost adaugate!")
+    st.rerun()
 
 
 # ------------- 2. Tabelul filtrabil dupa stare (PASI.md, Pasul 4) -------------
@@ -165,6 +181,16 @@ st.header("2. Aplicatiile mele")
 # 4. afisezi rezultatul cu st.dataframe, plus un st.caption cu numarul
 #    afisat din total
 
+if not aplicatii:
+    st.info("Nu exista nicio aplicatie adaugata.")
+else:
+    col_toate = st.columns(1)
+
+    with col_toate:
+        stari_ales = st.selectbox("Filtreaza dupa stari", ['Toate'] + STARI)
+
+    aplicatii_filtrare = [a for a in aplicatii if a['stari'] == stari_ales]
+    st.dataframe(aplicatii_filtrare)
 
 # ------------- 3. Adauga aplicatie noua (PASI.md, Pasul 5) -------------
 st.header("3. Adauga o aplicatie noua")
@@ -177,4 +203,10 @@ st.header("3. Adauga o aplicatie noua")
 #      data_ultimului_contact = data aplicarii aleasa in formular
 #    - o adaugi la lista completa cu .append(...)
 #    - apelezi salveaza_aplicatii, afisezi o confirmare, st.rerun()
-pass
+with st.form("form_adaugare"):
+    st.text_input ='companie_nou',
+    companie_nou = 'companie_nou',
+    post_nou = 'post_nou',
+    stare= 'Aplicat',
+    data_ultimului_contact = st.date_input("data_ultimului_contact", date.today())
+    notite = ""
