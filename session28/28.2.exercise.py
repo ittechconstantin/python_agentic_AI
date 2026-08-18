@@ -109,27 +109,29 @@ def abonamente_peste(conn, prag):
 
 def actualizeaza_pret(conn, nume, pret_nou):
     # TODO: UPDATE pret_lunar pentru abonamentul `nume` + commit; return rowcount
-    with conn.cursoer() as c:
+    with conn.cursor() as c:
         c.execute("""
         UPDATE ex27_abonamente 
         SET pret_lunar = %s 
         WHERE nume = %s""")
+        return c.rowcount()
     conn.commit()
 
 
 def sterge_abonament(conn, nume):
     # TODO: DELETE abonamentul `nume` + commit; return rowcount
     ...
-    with conn.cursoer() as c:
+    with conn.cursor() as c:
         c.execute("""
         DELETE FROM ex27_abonamente 
         WHERE nume = %s""")
+        return c.rowcount()
     conn.commit()
 
 
 def adauga_abonament(conn, nume, pret_lunar, categorie):
     # TODO: INSERT parametrizat + commit
-    with conn.cursoer() as c:
+    with conn.cursor() as c:
         c.execute("""
         INSERT INTO ex27_abonamente (nume, pret_lunar, categorie)
         VALUES (%s, %s, %s)"""), (nume, pret_lunar, categorie)

@@ -148,13 +148,28 @@ def pregateste(conn):
 # ---- ZONA TA DE LUCRU ---------------------------------------
 def nr_carti_disponibile(conn):
     # TODO: COUNT(*) din ex29_carti WHERE disponibila = TRUE
-    ...
+    with conn.cursor() as c:
+        c.execute("""
+        SELECT COUNT(*) FROM ex29_carti WHERE disponibila = TRUE
+        """)
+        return c.fetchone()[0]
 
 
 def carti_dupa_autor(conn, autor_fragment):
     # TODO: titlurile cartilor al caror autor CONTINE autor_fragment,
     # ordonate alfabetic dupa titlu
-    ...
+    with conn.cursor() as c:
+        c.execute("""
+        SELECT titlu FROM ex29_carti
+        WHERE autor LIKE %s
+        ORDER BY titlu DESC;
+        """,  (f"%{autor_fragment}%",))
+        # tupluri = c.fetchall()
+        # lista_de_titluri = []
+        # for tuplu in tupluri:
+        #     lista_de_titluri.append(tuplu[0])
+        # return lista_de_titluri
+        return [tuplu[0] for tuplu in c.fetchall()]
 
 
 def imprumuta_carte(conn, titlu, imprumutat_de, data_imprumut):
@@ -163,14 +178,39 @@ def imprumuta_carte(conn, titlu, imprumutat_de, data_imprumut):
     #  2) daca nu exista SAU nu e disponibila -> return False
     #  3) altfel: INSERT in ex29_imprumuturi, UPDATE disponibila=FALSE,
     #     commit, return True
-    ...
-
+    with conn.cursor() as c:
+        c.execute("""
+        SELECT id, disponibila FROM ex29_carti
+        WHERE titlu = %s
+        """, titlu)
+        carte = c.fetchone()
+        if not carte:
+            return False
+        else:
+            if carte[1] is False:
+                return False
+            else:
+                c.execute("""
+                INSERT INTO ex29_imprumuturi (carte_id, imprumutat_de, data_imprumut)
+                VALUES (%s, %s, %s)""", (carte[0], imprumutat_de, data_imprumut))
+                c.execute("""
+                UPDATE ex29_carti SET disponibila = False WHERE id = %s""", (carte[0],))
+                conn.commit()
+                return True
 
 def istoric_imprumuturi(conn, titlu):
     # TODO: JOIN ex29_imprumuturi cu ex29_carti, numele persoanelor
     # care au imprumutat cartea cu acest titlu, ordonate crescator
     # dupa data_imprumut
-    ...
+    with conn.cursor() as c:
+        c.execute("""
+        SELECT ex29_imprumuturi.imprumutat_de
+        FROM ex29_imprumuturi
+        JOIN ex29_carti ON ex29_imprumuturi.carte_id = ex29_carti.id
+        WHERE ex29_carti.titlu LIKE %s
+        ORDER BY ex29_imprumuturi.data_imprumut;
+        """, titlu)
+        return [tuplu[0] for tuplu in c.fetchall()]
 
 
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------
