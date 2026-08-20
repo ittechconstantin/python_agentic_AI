@@ -162,7 +162,7 @@ def carti_dupa_autor(conn, autor_fragment):
         c.execute("""
         SELECT titlu FROM ex29_carti
         WHERE autor LIKE %s
-        ORDER BY titlu DESC;
+        ORDER BY titlu ASC;
         """,  (f"%{autor_fragment}%",))
         # tupluri = c.fetchall()
         # lista_de_titluri = []
@@ -182,7 +182,7 @@ def imprumuta_carte(conn, titlu, imprumutat_de, data_imprumut):
         c.execute("""
         SELECT id, disponibila FROM ex29_carti
         WHERE titlu = %s
-        """, titlu)
+        """, (titlu,))
         carte = c.fetchone()
         if not carte:
             return False
