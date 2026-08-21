@@ -104,50 +104,47 @@ def adauga_livrare(oras: str, transportator: str, cost: float):
         livrare = Livrare(oras=oras, transportator=transportator, cost=cost)
         s.add(livrare)
         s.commit()
-        return livrare
-
+        l =s.get(Livrare, livrare.id)
+        return l
 
 def livrari_din_oras(oras: str):
     # TODO: transportatorii livrarilor din acel oras, ordonati alfabetic
     with Session(engine) as s:
-        nume_transportatori = select(Livrare.transportator).where(Livrare.oras == oras).order_by(Livrare.transportator.asc())
-        return [transportator for transportator in s.scalars(nume_transportatori)]
+        nume_transportatori = select(Livrare).where(Livrare.oras == oras).order_by(Livrare.transportator.asc())
+        return [l.transportator for l in s.scalars(nume_transportatori)]
 
 
 def mareste_cost(livrare_id: int, procent: float):
     # TODO: s.get -> daca None: raise ValueError
     #       altfel: cost = round(cost * (1 + procent/100), 2), commit
     with Session(engine) as s:
-        l = s.get(Livrare, livrare_id)
-        if l is None:
+        p = s.get(Livrare, livrare_id)
+        if p is None:
             raise ValueError("Nu exista livrare")
-        l.cost = round(l.cost * (1 + procent/100), 2)
+        p.cost =round(p.cost * (1 + procent/100), 2)
         s.commit()
 
 
 def cel_mai_scump_transportator():
     # TODO: transportatorul livrarii cu cel mai mare cost
-    with (Session(engine) as s):
-        cel_mai_scump = (select(Livrare).order_by(Livrare.cost.desc()))
+    with Session(engine) as s:
+        cel_mai_scump = s.scalars(select(Livrare.transportator).order_by(Livrare.cost.desc())).first()
+        return cel_mai_scump
 
-
-        transportatorul_cel_mai_scump = [Livrare.transportator for Livrare in s.scalars(cel_mai_scump)]
-        return transportatorul_cel_mai_scump[0]
 
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------
-if __name__ == "__main__":
-    pregateste()
+pregateste()
 
-    print("Cluj:", livrari_din_oras("Cluj"))                       # ['DPD', 'FanCourier']
+print("Cluj:", livrari_din_oras("Cluj"))                       # ['DPD', 'FanCourier']
 
-    with Session(engine) as s:
-        id_fan = s.scalar(
-            select(Livrare.id).where(
-                Livrare.oras == "Cluj", Livrare.transportator == "FanCourier"
-            )
+with Session(engine) as s:
+    id_fan = s.scalar(
+        select(Livrare.id).where(
+            Livrare.oras == "Cluj", Livrare.transportator == "FanCourier"
         )
-    mareste_cost(id_fan, 10)
-    with Session(engine) as s:
-        print("cost FanCourier dupa marire:", s.get(Livrare, id_fan).cost)  # 16.5
+    )
+mareste_cost(id_fan, 10)
+with Session(engine) as s:
+    print("cost FanCourier dupa marire:", s.get(Livrare, id_fan).cost)  # 16.5
 
-    print("cel mai scump transportator:", cel_mai_scump_transportator())    # Cargus
+print("cel mai scump transportator:", cel_mai_scump_transportator())    # Cargus
