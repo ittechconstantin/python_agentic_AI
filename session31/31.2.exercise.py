@@ -146,11 +146,12 @@ def scade_pret(film_id: int, procent: float):
     #       altfel:
     #       pret = round(pret * (1 - procent / 100), 2)
     #       commit
-    f = s.get(Film, film_id)
-    if f is None:
-        raise ValueError("Nu exista film")
-    f.pret = round(f.pret_bilet * (1 - procent / 100), 2)
-    s.commit()
+    with Session(engine) as s:
+        f = s.get(Film, film_id)
+        if f is None:
+            raise ValueError("Nu exista film")
+        f.pret_bilet = round(f.pret_bilet * (1 - procent / 100), 2)
+        s.commit()
 
 def film_cu_vanzari_maxime():
     # TODO: filmul cu cele mai multe bilete vandute

@@ -127,10 +127,10 @@ def adauga_produs(
             categorie=categorie,
             pret=pret,
             stoc=stoc
-    )
-    s.add(produs_nou)
-    s.commit()
-    return produs_nou
+        )
+        s.add(produs_nou)
+        s.commit()
+        return produs_nou
 
 
 def produse_din_categorie(categorie: str):
@@ -157,7 +157,7 @@ def produs_cu_stoc_maxim():
     # TODO: produsul cu cel mai mare stoc
     with Session(engine) as s:
         cel_mai_mare_stoc = (select(Produs).order_by(Produs.stoc.desc()))
-        produsul_cu_cel_mai_mare_stoc = [Produs.stoc for Produs in s.scalars(cel_mai_mare_stoc)]
+        produsul_cu_cel_mai_mare_stoc = [p.nume for p in s.scalars(cel_mai_mare_stoc)]
         return produsul_cu_cel_mai_mare_stoc[0]
 
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------
