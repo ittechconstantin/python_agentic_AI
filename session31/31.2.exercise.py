@@ -157,7 +157,7 @@ def film_cu_vanzari_maxime():
     # TODO: filmul cu cele mai multe bilete vandute
     with Session(engine) as s:
         cele_mai_multe_bilete = (select(Film).order_by(Film.bilete_vandute.desc()))
-        filmul_cu_cele_mai_multe_bilete = [Film.titlu for Film in s.scalars(cele_mai_multe_bilete)]
+        filmul_cu_cele_mai_multe_bilete = [f.titlu for f in s.scalars(cele_mai_multe_bilete)]
         return filmul_cu_cele_mai_multe_bilete[0]
 
 
