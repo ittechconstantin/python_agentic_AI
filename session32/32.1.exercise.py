@@ -140,7 +140,7 @@ def gaseste_oras(nume_oras):
     #       crapi daca orasul nu exista. Intoarce (lat, lon, nume) sau None.
     r = requests.get(GEOCODING_URL, params={"name": nume_oras, "count": 1, "language": "ro"})
 
-    rezultate = r.json()['results']
+    rezultate = r.json().get('results')
     if not rezultate:
         return None
     primul = rezultate[0]
@@ -184,11 +184,11 @@ def buletin(oras, suma, moneda_sursa, moneda_tinta):
     rata = curs_valutar(moneda_sursa, moneda_tinta)
     print(vremea, descriere, rata)
 
-    # if not date_oras:
-    #     return f"Orasul '{oras}' nu a fost gasit."
-    # return (f"Vremea pentru{oras}\n Vremea acum: {vremea_curenta()}")
+    if not date_oras:
+        return f"Orasul '{oras}' nu a fost gasit."
+    return (f"Vremea pentru {oras}\n Vremea acum: {descriere}")
 
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------
 print(buletin("Bucuresti", 100, "EUR", "RON"))
-# print()
-# print(buletin("OrasCareNuExista123", 100, "EUR", "RON"))
+print()
+print(buletin("OrasCareNuExista123", 100, "EUR", "RON"))
