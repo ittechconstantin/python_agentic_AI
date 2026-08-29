@@ -140,55 +140,56 @@ def gaseste_oras(nume_oras):
     #       crapi daca orasul nu exista. Intoarce (lat, lon, nume) sau None.
     r = requests.get(GEOCODING_URL, params={"name": nume_oras, "count": 1, "language": "ro"})
 
+    r.raise_for_status()
     rezultate = r.json().get('results')
     if not rezultate:
         return None
     primul = rezultate[0]
     return primul['latitude'], primul['longitude'], primul['name']
 
-orasalul_cautat = gaseste_oras("Timisoara")
-print(orasalul_cautat)
-
 def vremea_curenta(lat, lon):
     # TODO: GET la VREME_URL cu params={"latitude": lat, "longitude": lon,
     #       "current_weather": True}. Intoarce r.json()["current_weather"].
 
     r = requests.get(VREME_URL, params={"latitude": lat, "longitude": lon, "current_weather": True} )
-    print(r.json())
-    result = r.json()['current_weather']
-    return result
-
-print(vremea_curenta(orasalul_cautat[0], orasalul_cautat[1]))
+    r.raise_for_status()
+    return r.json()['current_weather']
 
 def descrie_vreme(cod):
     # TODO: cauta 'cod' in CODURI_VREME, cu valoare implicita
     #       "vreme necunoscuta" daca nu exista (foloseste .get).
-
    return CODURI_VREME.get(cod, "vreme necunoscuta")
 
 def curs_valutar(sursa, tinta):
     # TODO: GET la VALUTAR_URL cu params={"base": sursa, "symbols": tinta}.
     #       Intoarce r.json()["rates"][tinta]  (un float).
     p = requests.get(VALUTAR_URL, params={"base": sursa, "symbols": tinta})
-    rezultat = p.json()["rates"][tinta]
-    return float(rezultat)
+    p.raise_for_status()
+    return p.json()["rates"][tinta]
 
 def buletin(oras, suma, moneda_sursa, moneda_tinta):
     # TODO: combina toate functiile de mai sus intr-un string, in
     #       formatul aratat la OUTPUT ASTEPTAT. Daca orasul nu e gasit,
     #       intoarce  f"Orasul '{oras}' nu a fost gasit."
-    date_oras = gaseste_oras(oras)
-    lat, lon, nume = date_oras
+    gasit = gaseste_oras(oras)
+    if gasit is None:
+        return f"Orasul '{oras}' nu a fost gasit."
+
+    lat, lon, nume = gasit
     vremea = vremea_curenta(lat, lon)
     descriere = descrie_vreme(vremea["weathercode"])
     rata = curs_valutar(moneda_sursa, moneda_tinta)
-    print(vremea, descriere, rata)
 
-    if not date_oras:
-        return f"Orasul '{oras}' nu a fost gasit."
-    return (f"Vremea pentru {oras}\n Vremea acum: {descriere}")
+    temp = vremea["temperature"]
+    vant = vremea["windspeed"]
+    linii = [
+        f"Buletin pentru {nume}",
+        f"  Vremea acum: {temp} grade C, {descriere}, vant {vant} km/h",
+        f"  {suma} {moneda_sursa} = {round(suma * rata, 2)} {moneda_sursa}",
+    ]
+    return "\n".join(linii)
 
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------
-print(buletin("Bucuresti", 100, "EUR", "RON"))
+print(buletin("Timisoara", 100, "EUR", "RON"))
 print()
 print(buletin("OrasCareNuExista123", 100, "EUR", "RON"))

@@ -120,10 +120,9 @@ def urmatoarea_zi_libera(cod_tara):
     # TODO: GET f"{BAZA}/NextPublicHolidays/{cod_tara}"
     #       -> primul element din lista, sau None daca lista e goala
     p = requests.get(f"{BAZA}/NextPublicHolidays/{cod_tara}",timeout=10)
-    rezultat = p.json().get(f"{BAZA}/NextPublicHolidays/{cod_tara}")
-    if not rezultat:
-        return None
-    return rezultat[0]
+    p.raise_for_status()
+    lista = p.json()
+    return lista[0] if lista else None
 
 
 def e_azi_zi_libera(cod_tara):
@@ -138,6 +137,22 @@ def raport_zile_libere(an, cod_tara):
     total_zile = numar_zile_libere(an, cod_tara)
     urmatoarea = urmatoarea_zi_libera(cod_tara)
     azi = e_azi_zi_libera(cod_tara)
+
+    if urmatoarea is not None:
+        nume = urmatoarea["localName"]
+        data = urmatoarea["date"]
+        linie_urmatoare = f"{data} - {nume}"
+    else:
+        linie_urmatoare = "nu mai sunt zile libere anul acesta"
+
+    raspuns_azi = "Da" if azi else "Nu"
+    linii = [
+        f"Raport pentru {cod_tara}, anul {an}:",
+        f"  Total zile libere legale: {total_zile}",
+        f"  Urmatoare zi libera: {linie_urmatoare}",
+        f"  Azi e zi libera: {raspuns_azi}",
+    ]
+    return "\n".join(linii)
 
     return (f"Raport pentru {cod_tara}, anul {an}\n Total zile libere legale: {total_zile}\n Urmatoarea zi libera: {urmatoarea}\n Azi e zi libera? {azi}")
 
