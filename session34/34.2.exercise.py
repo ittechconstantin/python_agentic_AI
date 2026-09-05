@@ -124,9 +124,10 @@ def din_json_lista(text):
 
 def valoare_totala(produse):
     # TODO: suma pret * stoc
-    for p in produse:
-        return p.pret * p.stoc
-
+    if produse:
+        return sum(p.pret*p.stoc for p in produse)
+    else:
+        return 0
 
 def doar_active(produse):
     # TODO: numele produselor active, sortate
@@ -135,7 +136,7 @@ def doar_active(produse):
 
 def dupa_categorie(produse, categorie):
     # TODO: numele produselor din categoria data, sortate
-    sorted(p.nume for p in produse if p.categorie == categorie)
+    return sorted(p.nume for p in produse if p.categorie == categorie)
 
 
 def ca_dict(produs):
