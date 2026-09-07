@@ -91,18 +91,22 @@ def erori(raw):
 
 def separa(intrari):
     # TODO: intoarce (nume_valide, nr_invalide)
-    nume_valide, nr_invalide = intrari[0]['nume'], intrari[0]['varsta']
-    nr_invalide = []
-    for raw in intrari:
-        try:
-            raw['nume']
-        except ValidationError as e:
-            return [er["msg"] for er in e.errors()]
-        if raw['nume'] != nume_valide:
-            nr_invalide.append(raw)
+    # nume_valide, nr_invalide = intrari[0]['nume'], intrari[0]['varsta']
+    # nr_invalide = []
+    # for raw in intrari:
+    #     try:
+    #         raw['nume']
+    #     except ValidationError as e:
+    #         return [er["msg"] for er in e.errors()]
+    #     if raw['nume'] != nume_valide:
+    #         nr_invalide.append(raw)
 
 
-    return ([nume_valide], len(nr_invalide))
+        nume_valide = [raw["nume"] for raw in intrari if e_valid(raw)]
+        nr_invalide = sum(1 for raw in intrari if not e_valid(raw))
+        return nume_valide, nr_invalide
+
+
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------
 print("valid (coercion):", e_valid({"nume": "Ana", "varsta": "30", "email": "a@b.com"}))    # True
 print("valid (nume scurt):", e_valid({"nume": "X", "varsta": 30, "email": "x@y.com"}))      # False

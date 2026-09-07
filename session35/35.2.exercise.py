@@ -100,25 +100,60 @@ PAYLOAD_TEXT_AGE = {
 
 # ---- ZONA TA DE LUCRU ---------------------------------------
 # TODO: modelul Locatie(BaseModel)
-
+class Locatie(BaseModel):
+    oras: str
+    tara: str
 
 # TODO: modelul Client(BaseModel) cu alias-uri, Locatie imbricat,
 #       field_validator(mode="before") pe varsta, field_serializer pe inregistrat
+class Client(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    prenume:     str = Field(alias="firstName")
+    nume:        str = Field(alias="lastName")
+    varsta:      int = Field(alias="age", ge = 0)
+    locatie: Locatie = Field(alias="location")
+    inregistrat: date = Field(alias="registeredAt")
 
+    @field_validator("varsta", mode = "before")
+    @classmethod
+    def curata_varsta(cls, v):
+        if isinstance(v, str):
+            v = "".join(ch for ch in v if ch.isdigit())
+        return v
+
+
+    @field_serializer("inregistrat")
+    @classmethod
+    def serializeaza_data(cls, v: date) -> str:
+        luna = {
+            1 : "jan",
+            2 : "feb",
+            3 : "mar",
+            4 : "apr",
+            5 : "mai",
+            6 : "iun",
+            7 : "iul",
+            8 : "aug",
+            9 : "sep",
+            10 : "oct",
+            11 : "nov",
+            12 : "dec",
+        }
+        return f"{v.day} {luna[v.month]} {v.year}"
 
 def din_api(payload):
     # TODO: Client.model_validate(payload)
-    ...
+    return Client.model_validate(payload)
 
 
 def nume_complet(client):
     # TODO: prenume + " " + nume
-    ...
+    return f"{client.prenume + " " + client.nume}"
 
 
 def inapoi_api(client):
     # TODO: client.model_dump(by_alias=True)
-    ...
+    return client.model_dump(by_alias=True)
 
 
 # ---- COD DE TEST (nu trebuie sa-l modifici) -----------------
