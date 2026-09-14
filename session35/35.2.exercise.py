@@ -123,8 +123,7 @@ class Client(BaseModel):
 
 
     @field_serializer("inregistrat")
-    @classmethod
-    def serializeaza_data(cls, v: date) -> str:
+    def serializeaza_data(self, v: date) -> str:
         luna = {
             1 : "jan",
             2 : "feb",
