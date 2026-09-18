@@ -35,15 +35,13 @@ class Base(DeclarativeBase):
 class Task(Base):
     __tablename__ = "s38_task"
 
-    id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    titlu : Mapped[str] = mapped_column(String(200))
-    limbaj : Mapped[str] = mapped_column(String(20))
-    dificultate : Mapped[str] = mapped_column(String(10))
-    recompensa : Mapped[float]
-    rezolvat : Mapped[bool] = mapped_column(default = False)
+    id:          Mapped[int]   = mapped_column(primary_key=True, autoincrement=True)
+    titlu:       Mapped[str]   = mapped_column(String(200))
+    limbaj:      Mapped[str]   = mapped_column(String(20))
+    dificultate: Mapped[str]   = mapped_column(String(10))
+    recompensa:  Mapped[float]
+    rezolvat:    Mapped[bool]  = mapped_column(default=False)
 
-    def __repr__(self):
-        return f"<Task id={self.id} titlu={self.titlu!r} rezolvat={self.rezolvat}>"
 
 # reset_db() -> sterge tot si reincepe curat (demo/teste)
 # init_db()  -> creeaza tabela doar daca lipseste + seed doar daca e goala
@@ -79,14 +77,10 @@ def init_db():
 #   - s.add(t), apoi s.commit()
 #   - return t
 def adauga_task(s, titlu, limbaj, dificultate, recompensa):
-    t = Task(
-        titlu=titlu,
-        limbaj=limbaj,
-        dificultate=dificultate,
-        recompensa=recompensa
-    )
-    s.add(t)
-    s.commit()
+    t = Task(titlu=titlu, limbaj=limbaj, dificultate=dificultate, recompensa=recompensa)
+    s.add(t)          # doar il pune in "cos" - inca nu exista in MySQL
+    s.commit()        # ACUM se salveaza, si ACUM primeste t.id de la baza
+    return t
 
 # TODO: scrie toate_task_urile(s)
 #   - select(Task).order_by(Task.id)
@@ -98,45 +92,37 @@ def toate_task_urile(s):
 # TODO: scrie un_task(s, task_id)
 #   - return s.get(Task, task_id)
 def un_task(s, task_id):
-    task_cautat =  s.get(Task == task_id)
+    task_cautat = s.get(Task, task_id)
     return task_cautat
 
 # TODO: scrie marcheaza_rezolvat(s, task_id)
 #   - s.get(Task, task_id), daca None -> return None
 #   - t.rezolvat = True, s.commit(), return t
 def marcheaza_rezolvat(s, task_id):
-    taskul_cautat = s.get(Task == task_id)
-    if taskul_cautat is None:
+    task_cautat = s.get(Task, task_id)
+    if task_cautat is None:
         return None
-    taskul_cautat.rezolvat = True
+    task_cautat.rezolvat = True
     s.commit()
-    return taskul_cautat
+    return task_cautat
 
 # TODO: scrie sterge_task(s, task_id)
 #   - s.get(Task, task_id), daca None -> return False
 #   - s.delete(t), s.commit(), return True
 def sterge_task(s, task_id):
-    task_cautat = s.get(Task == task_id)
+    task_cautat = s.get(Task, task_id)
     if task_cautat is None:
         return False
     s.delete(task_cautat)
     s.commit()
     return True
 
+
 # TODO: scrie recompensa_disponibila(s)
 #   - select(Task).where(Task.rezolvat == False), s.scalars(...).all()
 #   - suma recompenselor, cu sum() peste task-urile nerezolvate
 def recompensa_disponibila(s):
-    task_nerezolvat = s.scalars(select(Task).where(Task.rezolvat ==False)).all()
-    suma = 0
-    for t in task_nerezolvat:
-        suma += t.recompensa
-    return suma
+    nerezolvate = s.scalars(select(Task).where(Task.rezolvat == False)).all()
+    return float(sum(t.recompensa for t in nerezolvate))
 
-
-
-
-with SessionLocal() as s:
-    print(recompensa_disponibila(s))
-
-
+init_db()

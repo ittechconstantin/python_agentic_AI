@@ -8,6 +8,7 @@
 import streamlit as st
 from comun import api
 
+
 st.title("📋 Task-uri")
 
 
@@ -27,11 +28,22 @@ if not task_uri:
 #   - filtreaza task_uri dupa alegerile de mai sus
 # --- SIDEBAR: filtre (client-side) ---
 
+st.sidebar.header("Filtre")
 
-# TODO: un "rand de card" pentru fiecare task
-#   - st.container(border=True) cu 4 coloane: info, stare, rezolva, sterge
-#   - info: titlu (markdown) + limbaj/dificultate/recompensa (caption)
-#   - stare: st.success daca rezolvat, st.warning daca nu
+limbaje_disponibile = sorted({t['limbaj'] for t in task_uri})
+limbaje_ales = st.sidebar.selectbox("Limbaj", ['Toate'] + limbaje_disponibile)
+
+doar_nerezolvate = st.sidebar.checkbox("Doar nerezolvate", value=False)
+
+task_uri_filtrate = task_uri
+
+if limbaje_ales !="Toate":
+    task_uri_filtrate = [t for t in task_uri_filtrate if t['limbaj'] == limbaje_ales]
+
+if doar_nerezolvate:
+    task_uri_filtrate = [t for t in task_uri_filtrate if not t['rezolvat']]
+
+
 # --- LISTA, ca randuri de card (nu st.dataframe - avem nevoie de butoane) ---
 for t in task_uri_filtrate:
     with st.container(border=True):
@@ -54,7 +66,14 @@ for t in task_uri_filtrate:
             #     imediat starea noua (fara rerun, butonul ar ramane
             #     vizibil desi task-ul tocmai s-a rezolvat)
             #   - daca nu: st.error(rezultat)
-            ...
+            if not t['rezolvat']:
+                buton_actualizare = st.button("Rezolva", key=f"rezolva_{t['id']}")
+                if buton_actualizare:
+                    ok, rezultat = api("PUT",  f"/task-uri/{t['id']}/rezolva")
+                    if ok:
+                        st.rerun()
+                    else:
+                        st.error(rezultat)
 
 
         with c_sterge:
@@ -63,4 +82,10 @@ for t in task_uri_filtrate:
             #   - daca ok: st.rerun() - task-ul disparut nu mai trebuie
             #     sa apara in lista redesenata
             #   - daca nu: st.error(rezultat)
-           ...
+            buton_stergere = st.button("Sterge", key=f"sterge_{t['id']}")
+            if buton_stergere:
+                ok, rezultat = api('DELETE', f"/task-uri/{t['id']}")
+                if ok:
+                    st.rerun()
+                else:
+                    st.error(rezultat)

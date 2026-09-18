@@ -6,25 +6,30 @@
 # =============================================================
 
 import streamlit as st
+
 from comun import api
 
 st.title("➕ Adauga task")
 
-# TODO: formularul de adaugare
-#   - titlu: st.text_input
-#   - limbaj + dificultate: cate un st.selectbox, pe aceeasi linie (st.columns)
-#   - recompensa: st.number_input
-#   - buton de submit: st.form_submit_button
+with st.form("form_task_nou", clear_on_submit=True):
+    titlu = st.text_input(label ="Titlu", placeholder="Introduceti numele taskului")
+    c1, c2 = st.columns(2)
+    limbaj = c1.selectbox("Limbaj", ['Python', "JavaScript", "Go", "Rust"])
+    dificultate = c2.selectbox("Dificultate", ['usor', "mediu", "greu"])
+    recompensa = st.number_input("Recompensa (RON)", min_value=0.0, step=10.0, value=50.0)
+    trimis = st.form_submit_button("Creeaza un task", type="primary")
 
 
+if trimis:
+    ok, rezultat = api("POST", "/task-uri", json={
+        'titlu': titlu,
+        'limbaj': limbaj,
+        'dificultate': dificultate,
+        'recompensa': recompensa,
+    })
 
-
-# TODO: cand formularul e trimis (trimis == True)
-#   - trimite campurile completate mai sus catre API, ca JSON:
-#       api("POST", "/task-uri", json={"titlu": titlu, "limbaj": limbaj,
-#           "dificultate": dificultate, "recompensa": recompensa})
-#   - daca ok: rezultat e task-ul creat, asa cum l-a intors serverul -
-#     arata un mesaj de succes cu rezultat['titlu'] si rezultat['id'],
-#     apoi st.balloons() (formularul se goleste singur, clear_on_submit=True)
-#   - daca nu: st.error(rezultat) - mesajul vine deja formatat de api(),
-#     camp cu camp
+    if ok:
+        st.success(f"Task-ul creat: {rezultat['titlu']}/ id: {rezultat['id']}")
+        st.balloons()
+    else:
+        st.error(rezultat)

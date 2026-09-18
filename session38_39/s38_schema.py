@@ -1,4 +1,6 @@
 from enum import Enum
+from pprint import pprint
+
 from pydantic import BaseModel, Field, ValidationError
 
 
@@ -45,5 +47,6 @@ def valideaza(date_brute: dict):
         task = TaskIn.model_validate(date_brute)
         return {"valid": True, "task": task}
     except ValidationError as e:
+        pprint(e.errors())
         erori = [f"{'.'.join(str(p) for p in er['loc'])}: {er['msg']}" for er in e.errors()]
         return {"valid": False, "erori": erori}

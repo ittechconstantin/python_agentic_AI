@@ -19,7 +19,7 @@ from s38_schema import TaskIn
 # la fiecare ruta, fiind deja legat de fabrica.
 
 
-init_db()   # la pornire: cream tabela daca nu exista + punem datele
+#init_db()   # la pornire: cream tabela daca nu exista + punem datele
 
 app = FastAPI(title="Bounty Board", version="0.3.0 (s38, MySQL)")
 
@@ -37,9 +37,9 @@ def lista_task_uri():
     #   - with SessionLocal() as s: ...
     #   - s38_model.toate_task_urile(s), transformat in lista de dict-uri
     with SessionLocal() as s:
-        return [{"id": t.id,"titlu": t.titlu,"limbaj": t.limbaj,
-                 "dificultate": t.dificultate,"recompensa": t.recompensa}
-                for t in s38_model.toate_task_urile(s)]
+        return [{"id": t.id, "titlu": t.titlu, "limbaj": t.limbaj,
+                 "dificultate": t.dificultate, "recompensa": t.recompensa,
+                 "rezolvat": t.rezolvat} for t in s38_model.toate_task_urile(s)]
 
 
 @app.get("/task-uri/{task_id}")
@@ -51,8 +51,9 @@ def un_task(task_id: int):
         t = s38_model.un_task(s, task_id)
         if t is None:
             raise HTTPException(status_code=404, detail=f"task-ul {task_id} nu exista")
-        return {"id": t.id,"titlu": t.titlu,"limbaj": t.limbaj,
-                 "dificultate": t.dificultate,"recompensa": t.recompensa}
+        return {"id": t.id, "titlu": t.titlu, "limbaj": t.limbaj,
+                "dificultate": t.dificultate, "recompensa": t.recompensa,
+                "rezolvat": t.rezolvat}
 
 # data: TaskIn -> FastAPI valideaza body-ul CU SCHEMA din s38_schema.py
 # inainte sa ruleze functia; abia apoi salvam prin s38_model.adauga_task().
@@ -63,8 +64,10 @@ def adauga_task(data: TaskIn):
     #   - intoarce dict-ul
     with SessionLocal() as s:
         t = s38_model.adauga_task(s, data.titlu, data.limbaj, data.dificultate, data.recompensa)
-        return {"id": t.id,"titlu": t.titlu,"limbaj": t.limbaj,
-                 "dificultate": t.dificultate,"recompensa": t.recompensa}
+        return {"id": t.id, "titlu": t.titlu, "limbaj": t.limbaj,
+                "dificultate": t.dificultate, "recompensa": t.recompensa,
+                "rezolvat": t.rezolvat}
+
 
 @app.put("/task-uri/{task_id}/rezolva")
 def rezolva_task(task_id: int):
@@ -74,7 +77,7 @@ def rezolva_task(task_id: int):
     with SessionLocal() as s:
         t = s38_model.marcheaza_rezolvat(s, task_id)
         if t is None:
-            raise HTTPException(status_code=404, detail=f"task-ul {task_id} nu este rezolvat")
+            raise HTTPException(status_code=404, detail=f"task-ul {task_id} nu exista")
         return {"id": t.id, "rezolvat": t.rezolvat}
 
 @app.delete("/task-uri/{task_id}")
@@ -85,8 +88,9 @@ def sterge_task(task_id: int):
     with SessionLocal() as s:
         t = s38_model.sterge_task(s, task_id)
         if not t:
-            raise HTTPException(status_code=404, detail = f"task-ul {task_id} nu a fost gasit")
+            raise HTTPException(status_code=404, detail=f"task-ul {task_id} nu exista")
         return {"sters": task_id}
+
 
 @app.get("/recompensa-disponibila")
 def recompensa_disponibila():
@@ -94,8 +98,7 @@ def recompensa_disponibila():
     #   - s38_model.recompensa_disponibila(s)
     #   - {"recompensa_totala": ...}
     with SessionLocal() as s:
-        suma = s38_model.recompensa_disponibila(s)
-        return {"recompensa_totala": suma}
+        return {"recompensa_totala": s38_model.recompensa_disponibila(s)}
 
 # Rulare: python3 s38_app.py (din interiorul session38/) -> /docs
 # Test: POST /task-uri cu recompensa negativa -> 422, inainte sa atinga DB.
@@ -112,3 +115,6 @@ uvicorn.run(app, host="127.0.0.1", port=8000)
 # - In s39: Depends(get_db) in loc de with SessionLocal() repetat, +
 #   middleware + CORS.
 # =============================================================
+
+
+
